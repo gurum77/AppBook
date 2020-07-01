@@ -1,7 +1,9 @@
+import 'package:appbook/AppDetailPage.dart';
+import 'package:appbook/StaticData.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
-void main() => runApp(MaterialApp(home: MyAppsPage()));
+import 'HomePage.dart';
 
 class MyAppsPage extends StatefulWidget {
   @override
@@ -87,7 +89,15 @@ class _ListAppsPagesContent extends StatelessWidget {
                                 backgroundColor: Colors.white,
                               )
                             : null,
-                        onTap: () => DeviceApps.openApp(app.packageName),
+                        // onTap: () => DeviceApps.openApp(app.packageName),
+                        onTap: () {
+                          StaticData.CurrentApplication = app;
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => AppDetailPage(),
+                              ));
+                        },
                         title: Text("${app.appName} (${app.packageName})"),
                         subtitle: Text('Version: ${app.versionName}\n'
                             'System app: ${app.systemApp}\n'
