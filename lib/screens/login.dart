@@ -1,5 +1,11 @@
+import 'package:appbook/data/join_or_login.dart';
 import 'package:appbook/helpers/login_background.dart';
+import 'package:appbook/screens/forget_pw.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'main_page.dart';
 
 class AuthPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -16,7 +22,9 @@ class AuthPage extends StatelessWidget {
         children: <Widget>[
           CustomPaint(
             size: size,
-            painter:  LoginBackground() ,),
+            painter: LoginBackground(
+                isJoin: Provider.of<JoinOrLogin>(context).isJoin),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.end,
@@ -31,7 +39,19 @@ class AuthPage extends StatelessWidget {
               Container(
                 height: size.height * 0.1,
               ),
-              Text("Don't Have an Account? Create One"),
+              Consumer<JoinOrLogin>(
+                builder: (context, joinOrLogin, child) => GestureDetector(
+                    onTap: () {
+                      joinOrLogin.toggle();
+                    },
+                    child: Text(
+                      joinOrLogin.isJoin
+                          ? "Already Have an Account? Sign in"
+                          : "Don't Have an Account? Create One",
+                      style: TextStyle(
+                          color: joinOrLogin.isJoin ? Colors.red : Colors.blue),
+                    )),
+              ),
               Container(
                 height: size.height * 0.05,
               ),
@@ -66,7 +86,7 @@ class AuthPage extends StatelessWidget {
                   ),
                   validator: (String value) {
                     if (value.isEmpty) {
-                      return 'Please input correct email.';
+                      return 'Please input correct Email.';
                     }
                     return null;
                   },
@@ -80,7 +100,7 @@ class AuthPage extends StatelessWidget {
                   ),
                   validator: (String value) {
                     if (value.isEmpty) {
-                      return 'Please input correct password.';
+                      return 'Please input correct Password.';
                     }
                     return null;
                   },
@@ -88,7 +108,14 @@ class AuthPage extends StatelessWidget {
                 Container(
                   height: 8,
                 ),
-                Text("Forgot Password")
+                Consumer<JoinOrLogin>(
+                  builder: (context, value, child) => Opacity(
+                    opacity: value.isJoin ? 0 : 1,
+                    child: GestureDetector(
+                        onTap: value.isJoin ? null : (){goToForgetPw(context);},
+                        child: Text("Forgot Password")),
+                  ),
+                )
               ],
             ),
           ),
@@ -97,28 +124,67 @@ class AuthPage extends StatelessWidget {
     );
   }
 
+  goToForgetPw(BuildContext context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ForgetPw()));
+  }
+
   Widget _authButton(Size size) => Positioned(
         left: size.width * 0.15,
         right: size.width * 0.15,
         bottom: 0,
         child: SizedBox(
           height: 50,
-          
-          child: RaisedButton(
-            child: Text('Login', style: TextStyle(
-              fontSize: 20, color: Colors.white
-            ),),
-            color: Colors.blue,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-            onPressed: ()  {
-              if(_formKey.currentState.validate()){
-                print(_emailController.text.toString());
-              }
-            },
+          child: Consumer<JoinOrLogin>(
+            builder: (context, joinOrLogin, child) => RaisedButton(
+              child: Text(
+                joinOrLogin.isJoin ? 'Join' : 'Login',
+                style: TextStyle(fontSize: 20, color: Colors.white),
+              ),
+              color: joinOrLogin.isJoin ? Colors.red : Colors.blue,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(25)),
+              onPressed: () {
+                if (_formKey.currentState.validate()) {
+                  joinOrLogin.isJoin ? _register(context) : _login(context);
+                }
+              },
+            ),
           ),
         ),
       );
+
+  void _register(BuildContext context) async {
+    final AuthResult result = await FirebaseAuth.instance
+        .createUserWithEmailAndPassword(
+            email: _emailController.text, password: _passwordController.text);
+
+    final FirebaseUser user = result.user;
+
+    if (user == null) {
+      final snackBar = SnackBar(
+        content: Text('Please try again later.'),
+      );
+
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
+  }
+
+  void _login(BuildContext context) async {
+    final AuthResult result = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(
+            email: _emailController.text, password: _passwordController.text);
+
+    final FirebaseUser user = result.user;
+
+    if (user == null) {
+      final snackBar = SnackBar(
+        content: Text('Please try again later.'),
+      );
+
+      Scaffold.of(context).showSnackBar(snackBar);
+    }
+  }
 
   Widget get _logoImage {
     return Expanded(
@@ -127,7 +193,8 @@ class AuthPage extends StatelessWidget {
         child: FittedBox(
           fit: BoxFit.contain,
           child: CircleAvatar(
-            backgroundImage: NetworkImage('https://picsum.photos/200'),
+            // backgroundImage: NetworkImage('https://picsum.photos/200'),
+            backgroundImage: AssetImage('assets/login.gif'),
           ),
         ),
       ),
