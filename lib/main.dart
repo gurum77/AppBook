@@ -1,9 +1,12 @@
 import 'package:appbook/data/join_or_login.dart';
 import 'package:appbook/screens/login.dart';
-import 'package:appbook/screens/main_page.dart';
+import 'package:appbook/screens/main_page_tmp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'screens/main_page.dart';
+import 'data/static_data.dart';
 
 void main() => runApp(MyApp());
 
@@ -26,9 +29,8 @@ class Splash extends StatelessWidget {
             return ChangeNotifierProvider<JoinOrLogin>.value(
                 value: JoinOrLogin(), child: AuthPage());
           } else {
-            return MainPageTemp(
-              email: snapshot.data.email,
-            );
+            StaticData.CurrentEmail = snapshot.data.email;
+            return MainPage();
           }
         });
   }

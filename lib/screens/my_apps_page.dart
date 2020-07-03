@@ -1,9 +1,9 @@
-import 'package:appbook/AppDetailPage.dart';
-import 'package:appbook/StaticData.dart';
+import 'package:appbook/screens/app_detail_page.dart';
+import 'package:appbook/data/static_data.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
-import 'HomePage.dart';
+import 'home_page.dart';
 
 class MyAppsPage extends StatefulWidget {
   @override
