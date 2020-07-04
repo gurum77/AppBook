@@ -12,7 +12,7 @@ class MyAppsPage extends StatefulWidget {
 
 class _MyAppsPageState extends State<MyAppsPage> {
   bool _showSystemApps = false;
-  bool _onlyLaunchableApps = false;
+  bool _onlyLaunchableApps = true;
 
   @override
   Widget build(BuildContext context) {
