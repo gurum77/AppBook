@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class AppDetailPage extends StatelessWidget {
   var db = Firestore.instance;
+  var commentsTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +19,20 @@ class AppDetailPage extends StatelessWidget {
     } else {
       //
 
+      Application app = StaticData.CurrentApplication;
+
       // db 추가
       // var collection = db.collection('app_detail');
       // var doc = collection.document(app.packageName);
-      // doc.setData(
-      //     {'category': 'game', 'installed': app.installTimeMillis.toString(), 'comments' : 'array-contains'});
-      //     doc.updateData({'comments' : FieldValue.arrayUnion(['a','b'])});
+      // doc.setData({
+      //   'category': 'game',
+      //   'installed': app.installTimeMillis.toString(),
+      //   'comments': 'array-contains'
+      // });
+      // doc.updateData({
+      //   'comments': FieldValue.arrayUnion(['a', 'b'])
+      // });
 
-      Application app = StaticData.CurrentApplication;
       return Scaffold(
         appBar: AppBar(title: Text('AppBook')),
         body: Center(
@@ -39,64 +46,100 @@ class AppDetailPage extends StatelessWidget {
                     )
                   : Text('No icon'),
               Text(
-                '${app.appName} (${app.packageName})',
-                style: TextStyle(fontSize: 19),
-              ),
+                  '${app.appName} (${app.packageName})',
+                  style: TextStyle(fontSize: 19),
+                ),
               Text('Version: ${app.versionName}\n'
-                  'System app: ${app.systemApp}\n'
-                  'APK file path: ${app.apkFilePath}\n'
-                  'Data dir: ${app.dataDir}\n'
-                  'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}\n'
-                  'Updated: ${DateTime.fromMillisecondsSinceEpoch(app.updateTimeMillis).toString()}'),
-              FutureBuilder(
-                future: getAppComments(),
-                builder: (context, snapShot) {
-                  if (snapShot == null) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else {
-                    if (snapShot.connectionState == ConnectionState.done) {
-                      if (snapShot.hasError) {
-                        return Text(
-                          "error : " + snapShot.error.toString(),
-                          style: TextStyle(color: Colors.blue, fontSize: 30),
-                        );
-                      }
-                      List<String> comments = snapShot.data;
-                      return Expanded(
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemBuilder: (context, position) {
-                            var comment = comments[position];
-                            return Column(
-                              children: <Widget>[
-                                ListTile(
-                                  leading: Text(position.toString()),
-                                  onTap: () {},
-                                  title: Text(comment),
-                                  subtitle: Text('sub'),
-                                ),
-                              ],
-                            );
-                          },
-                          itemCount: comments.length,
-                        ),
-                      );
-                    } else {
-                      return Text(
-                        'no data',
-                        style: TextStyle(color: Colors.yellow, fontSize: 30),
-                      );
-                    }
-                  }
-                },
-              ),
+                  // 'System app: ${app.systemApp}\n'
+                  // 'APK file path: ${app.apkFilePath}\n'
+                  // 'Data dir: ${app.dataDir}\n'
+                  'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}\n'),
+              // 'Updated: ${DateTime.fromMillisecondsSinceEpoch(app.updateTimeMillis).toString()}'),
+              buildCommentsList(),
+              buildInputComments(app),
             ],
           ),
         ),
       );
     }
+  }
+
+  FutureBuilder<List<String>> buildCommentsList() {
+    return FutureBuilder(
+      future: getAppComments(),
+      builder: (context, snapShot) {
+        if (snapShot == null) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          if (snapShot.connectionState == ConnectionState.done) {
+            if (snapShot.hasError) {
+              return Text(
+                "error : " + snapShot.error.toString(),
+                style: TextStyle(color: Colors.blue, fontSize: 30),
+              );
+            }
+            List<String> comments = snapShot.data;
+            return Expanded(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemBuilder: (context, position) {
+                  var comment = comments[position];
+                  return Column(
+                    children: <Widget>[
+                      ListTile(
+                        leading: Text(position.toString()),
+                        onTap: () {},
+                        title: Text(comment),
+                        subtitle: Text('sub'),
+                      ),
+                    ],
+                  );
+                },
+                itemCount: comments.length,
+              ),
+            );
+          } else {
+            return Text(
+              'no data',
+              style: TextStyle(color: Colors.yellow, fontSize: 30),
+            );
+          }
+        }
+      },
+    );
+  }
+
+  TextField buildInputComments(Application app) {
+    return TextField(
+      maxLength: 100,
+      autofocus: false,
+      controller: commentsTextController,
+      decoration: InputDecoration(
+        hintText: 'Enter a message',
+        suffixIcon: FlatButton(
+          padding: EdgeInsets.all(5),
+          child: Text('등록'),
+          color: Colors.blueAccent,
+          onPressed: () {
+            var collection = db.collection('app_detail');
+            var doc = collection.document(app.packageName);
+
+            getAppComments().then((value) => {
+                  doc.setData({
+                    'category': 'game',
+                    'installed': app.installTimeMillis.toString(),
+                    'comments': 'array-contains'
+                  }),
+                  value.add(commentsTextController.text),
+                  doc.updateData({'comments': FieldValue.arrayUnion(value)}),
+                  commentsTextController.text = ''
+                });
+          },
+        ),
+      ),
+    );
   }
 
 // 현재 앱의 comment를 모두 가져온다.
@@ -105,9 +148,12 @@ class AppDetailPage extends StatelessWidget {
     var doc = collection.document(StaticData.CurrentApplication.packageName);
     return doc.get().then((DocumentSnapshot ds) {
       var comments = List<String>();
-      for (var comment in ds.data['comments']) {
-        comments.add(comment.toString());
+      if (ds.data != null) {
+        for (var comment in ds.data['comments']) {
+          comments.add(comment.toString());
+        }
       }
+
       return comments;
     });
   }

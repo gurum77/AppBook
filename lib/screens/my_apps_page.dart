@@ -100,11 +100,12 @@ class _ListAppsPagesContent extends StatelessWidget {
                         },
                         title: Text("${app.appName} (${app.packageName})"),
                         subtitle: Text('Version: ${app.versionName}\n'
-                            'System app: ${app.systemApp}\n'
-                            'APK file path: ${app.apkFilePath}\n'
-                            'Data dir: ${app.dataDir}\n'
+                            // 'System app: ${app.systemApp}\n'
+                            // 'APK file path: ${app.apkFilePath}\n'
+                            // 'Data dir: ${app.dataDir}\n'
                             'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}\n'
-                            'Updated: ${DateTime.fromMillisecondsSinceEpoch(app.updateTimeMillis).toString()}'),
+                            // 'Updated: ${DateTime.fromMillisecondsSinceEpoch(app.updateTimeMillis).toString()}')
+                            ,)
                       ),
                       Divider(
                         height: 1.0,

@@ -5,14 +5,15 @@ import 'package:flutter/material.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    
     Size size = MediaQuery.of(context).size;
-    
+
     return Scaffold(
       backgroundColor: Colors.lightBlue,
       body: Column(
         children: <Widget>[
-          SizedBox(height: 50,),
+          SizedBox(
+            height: 50,
+          ),
           Container(
             // color: Colors.red,
             height: 100,
@@ -24,25 +25,27 @@ class HomePage extends StatelessWidget {
           ),
           Container(
             child: FittedBox(
-
               child: CircleAvatar(
                 // backgroundImage: NetworkImage('https://picsum.photos/200'),
                 backgroundImage: AssetImage('assets/login.gif'),
               ),
             ),
-            width:size.width,
-            height: 300,
+            width: size.width,
+            height: 290,
           ),
-          SizedBox(height: 30,),
-          Container(
+          SizedBox(
+            height: 20,
+          ),
+          Expanded(
             // color:Colors.yellow,
-            child: Text(
-              StaticData.CurrentEmail == null
-                  ? 'Unknown user'
-                  : StaticData.CurrentEmail,
-              style: TextStyle(fontSize: 20),
+            child: Center(
+              child: Text(
+                StaticData.CurrentEmail == null
+                    ? 'Unknown user'
+                    : StaticData.CurrentEmail,
+                style: TextStyle(fontSize: 20),
+              ),
             ),
-            height: 100,
           ),
         ],
       ),

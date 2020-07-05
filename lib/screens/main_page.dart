@@ -1,3 +1,4 @@
+import 'package:appbook/screens/all_apps_page.dart';
 import 'package:appbook/screens/home_page.dart';
 import 'package:appbook/screens/my_apps_page.dart';
 import 'package:appbook/data/static_data.dart';
@@ -17,7 +18,7 @@ class MainPage extends StatelessWidget {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         home: DefaultTabController(
-            length: 2,
+            length: 3,
             child: Scaffold(
                 appBar: AppBar(
                   title: Text('AppBook'),
@@ -27,13 +28,14 @@ class MainPage extends StatelessWidget {
                         text: 'Home',
                         icon: Icon(Icons.home),
                       ),
-                      Tab(text: 'My Apps', icon: Icon(Icons.apps)),
+                      Tab(text: 'My Apps', icon: Icon(Icons.favorite)),
+                      Tab(text: 'All Apps', icon: Icon(Icons.apps))
                      
                     ],
                   ),
                 ),
                 body: TabBarView(
-                  children: <Widget>[HomePage(), MyAppsPage()],
+                  children: <Widget>[HomePage(), MyAppsPage(), AllAppsPage()],
                 ))));
   }
 }
