@@ -1,7 +1,16 @@
 import 'package:device_apps/device_apps.dart';
 
 class StaticData {
-  static Application _currentPackageName;
+  static String  _currentIconUrl;
+  // ignore: non_constant_identifier_names
+  static String get CurrentIconUrl => _currentIconUrl;
+  // ignore: non_constant_identifier_names
+  static set CurrentIconUrl(var pn) => _currentIconUrl = pn;
+
+  
+  
+  
+
   
   static Application _currentApplication;
   // ignore: non_constant_identifier_names
