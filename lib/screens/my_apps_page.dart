@@ -1,5 +1,6 @@
 import 'package:appbook/screens/app_detail_page.dart';
 import 'package:appbook/data/static_data.dart';
+import 'package:appbook/widgets/application_column.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
@@ -80,41 +81,13 @@ class _ListAppsPagesContent extends StatelessWidget {
             return ListView.builder(
                 itemBuilder: (context, position) {
                   Application app = apps[position];
-                  return Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: app is ApplicationWithIcon
-                            ? CircleAvatar(
-                                backgroundImage: MemoryImage(app.icon),
-                                backgroundColor: Colors.white,
-                              )
-                            : null,
-                        // onTap: () => DeviceApps.openApp(app.packageName),
-                        onTap: () {
-                          StaticData.CurrentApplication = app;
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => AppDetailPage(),
-                              ));
-                        },
-                        title: Text("${app.appName} (${app.packageName})"),
-                        subtitle: Text('Version: ${app.versionName}\n'
-                            // 'System app: ${app.systemApp}\n'
-                            // 'APK file path: ${app.apkFilePath}\n'
-                            // 'Data dir: ${app.dataDir}\n'
-                            'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}\n'
-                            // 'Updated: ${DateTime.fromMillisecondsSinceEpoch(app.updateTimeMillis).toString()}')
-                            ,)
-                      ),
-                      Divider(
-                        height: 1.0,
-                      )
-                    ],
-                  );
+                  return ApplicationColumn(app: app, context: context);
                 },
                 itemCount: apps.length);
           }
         });
   }
+
+  // application 1개에 대한 column을 만든다.
 }
+

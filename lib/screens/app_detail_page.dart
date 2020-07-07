@@ -1,27 +1,12 @@
+import 'dart:async';
+
 import 'package:device_apps/device_apps.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../data/static_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
-
-Future<String> _getIconImageUrl() async {
-  var url = 'https://play.google.com/store/apps/details?id=mobile.Byung.Cargo';
-  var re = http.read(url);
-
-  re.then((value) {
-    var regex = RegExp(r'[\"]https://lh3.googleusercontent.com.*?[\"]');
-    var match = regex.firstMatch(value);
-    if (match != null) {
-      String str = value.substring(match.start, match.end);
-      return str;
-    } else {
-      return 'https://lh3.googleusercontent.com/bklJDdaWKb3pkVJJvwxjNIpMeo2ZnLVzh5I9FMhsNx7P2B-eKgzPXgyRY9XM6kw0ouU=s180-rw';
-    }
-  });
-
-  return null;
-}
 
 class AppDetailPage extends StatelessWidget {
   var db = Firestore.instance;
@@ -35,8 +20,6 @@ class AppDetailPage extends StatelessWidget {
         ),
       );
     } else {
-      //
-
       Application app = StaticData.CurrentApplication;
 
       return Scaffold(
@@ -59,8 +42,10 @@ class AppDetailPage extends StatelessWidget {
               ),
               Text('Version: ${app.versionName}\n'
                   'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}\n'),
+              // comments list
               buildCommentsList(),
-              buildInputComments(app),
+              // comment 입력창
+              buildInputComment(app),
             ],
           ),
         ),
@@ -115,7 +100,7 @@ class AppDetailPage extends StatelessWidget {
     );
   }
 
-  TextField buildInputComments(Application app) {
+  TextField buildInputComment(Application app) {
     return TextField(
       maxLength: 100,
       autofocus: false,
@@ -127,48 +112,18 @@ class AppDetailPage extends StatelessWidget {
           child: Text('등록'),
           color: Colors.blueAccent,
           onPressed: () {
+            // icon upload
+            _uploadIcon(app);
+
             // upload comments
-            var collection = db.collection('app_detail');
-            var doc = collection.document(app.packageName);
-
-
-            // 아이콘 이미지의 url을 playe store에서 가져온다.
-            String imageUrl = 'none';
-            var url =
-                'https://play.google.com/store/apps/details?id=mobile.Byung.Cargo';
-            http.read(url).then((value) {
-              var regex =
-                  RegExp(r'[\"]https://lh3.googleusercontent.com.*?[\"]');
-              var match = regex.firstMatch(value);
-              if (match != null) {
-                imageUrl = value.substring(match.start, match.end);
-                if (imageUrl.length > 2) {
-                  String tmp = imageUrl.substring(1, imageUrl.length - 1);
-                  imageUrl = tmp;
-                }
-              }
-
-              getAppComments().then((value) => {
-                    doc.setData({
-                      'category':
-                          app.category == null ? -1 : app.category.index,
-                      'install_time': app.installTimeMillis,
-                      'version_name': app.versionName,
-                      'comments': 'array-contains',
-                      'icon_url': imageUrl
-                    }),
-                    value.add(commentsTextController.text),
-                    doc.updateData({'comments': FieldValue.arrayUnion(value)}),
-                    commentsTextController.text = ''
-                  });
-            });
+            _uploadComments(app);
           },
         ),
       ),
     );
   }
 
-// 현재 앱의 comment를 모두 가져온다.
+  // 현재 앱의 comment를 모두 가져온다.
   Future<List<String>> getAppComments() {
     var collection = db.collection('app_detail');
     var doc = collection.document(StaticData.CurrentApplication.packageName);
@@ -182,5 +137,40 @@ class AppDetailPage extends StatelessWidget {
 
       return comments;
     });
+  }
+
+  // comments를 upload 한다.
+  void _uploadComments(Application app) {
+    var collection = db.collection('app_detail');
+    var doc = collection.document(app.packageName);
+
+    getAppComments().then((value) => {
+          doc.setData({
+            'app_name' : app.appName,
+            'category': app.category == null ? -1 : app.category.index,
+            'install_time': app.installTimeMillis,
+            'version_name': app.versionName,
+            'comments': 'array-contains',
+          }),
+          value.add(commentsTextController.text),
+          doc.updateData({'comments': FieldValue.arrayUnion(value)}),
+          commentsTextController.text = ''
+        });
+  }
+
+  // icon을 upload한다.
+  Future<void> _uploadIcon(Application app) async {
+    if (app is ApplicationWithIcon) {
+      final StorageReference storageReference =
+          FirebaseStorage().ref().child('/app_icons/' + app.packageName);
+      final StorageUploadTask uploadTask = storageReference.putData(app.icon);
+      final StreamSubscription<StorageTaskEvent> streamSubscription =
+          uploadTask.events.listen((event) {
+        print('EVENT ${event.type}');
+      });
+
+      await uploadTask.onComplete;
+      streamSubscription.cancel();
+    }
   }
 }
