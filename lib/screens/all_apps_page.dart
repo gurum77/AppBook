@@ -51,6 +51,8 @@ class AllAppsPage extends StatelessWidget {
                                   builder: (context) => AppDetailPage(),
                                 ));
                           });
+                          // 설치되어 있지 않다면...
+                          // db 정보로 application 클래스를 만들어서 상세페이지로 이동
                         } else {
                           Map<dynamic, dynamic> map = {
                             'app_name': 'name',

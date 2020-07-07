@@ -1,5 +1,4 @@
 import 'package:device_apps/device_apps.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../data/static_data.dart';
@@ -128,12 +127,12 @@ class AppDetailPage extends StatelessWidget {
           child: Text('등록'),
           color: Colors.blueAccent,
           onPressed: () {
-            // upload icon
-
             // upload comments
             var collection = db.collection('app_detail');
             var doc = collection.document(app.packageName);
 
+
+            // 아이콘 이미지의 url을 playe store에서 가져온다.
             String imageUrl = 'none';
             var url =
                 'https://play.google.com/store/apps/details?id=mobile.Byung.Cargo';
