@@ -78,8 +78,7 @@ class AllAppsPage extends StatelessWidget {
       'category': category == null ? -1 : category,
     };
 
-    if(icon != null)
-    {
+    if (icon != null) {
       map['app_icoin'] = icon;
     }
 
