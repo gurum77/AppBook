@@ -8,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 class MyAppsPage extends StatefulWidget {
-  MyAppsPage() {
-  }
+  MyAppsPage() {}
   @override
   _MyAppsPageState createState() => _MyAppsPageState();
 }
@@ -71,10 +70,7 @@ class _ListAppsPagesContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: DeviceApps.getInstalledApplications(
-            includeAppIcons: false,
-            includeSystemApps: includeSystemApps,
-            onlyAppsWithLaunchIntent: onlyAppsWithLaunchIntent),
+        future: getInstalledApplications(),
         builder: (context, data) {
           if (data.data == null) {
             return const Center(child: CircularProgressIndicator());
@@ -93,4 +89,26 @@ class _ListAppsPagesContent extends StatelessWidget {
         });
   }
 
+  Future<List<Application>> getInstalledApplications() async {
+    var apps = List<Application>();
+
+    // 없으면 가져온다.
+    if (StaticData.MyApps.length == 0) {
+      DeviceApps.getInstalledApplications(
+              includeAppIcons: false,
+              includeSystemApps: true,
+              onlyAppsWithLaunchIntent: true)
+          .then((value) {
+        for (var app in value) {
+          StaticData.MyApps[app.packageName] = app;
+        }
+      });
+    }
+    // 있으면 그냥 담는다.
+    else {
+      apps.addAll(StaticData.MyApps.values);
+    }
+
+    return apps;
+  }
 }

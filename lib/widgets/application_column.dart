@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/get_app_detail.dart';
 import 'package:appbook/screens/app_detail_page.dart';
+import 'package:appbook/screens/my_apps_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
@@ -91,9 +92,23 @@ class ApplicationColumn extends StatelessWidget {
 
   // package에 대한 app icon을 가져옴
   Future<Uint8List> getApplicationIconInDevice(String packageName) async {
+    // myapps에서 미리 찾아 본다.
+    Application myApp = StaticData.MyApps[packageName];
+    if (myApp != null && myApp is ApplicationWithIcon) {
+      return myApp.icon;
+    }
+
+    // 없으면 읽어온다.
     Application app = await DeviceApps.getApp(packageName, true);
 
-    if (app is ApplicationWithIcon) return app.icon;
+    if (app is ApplicationWithIcon) {
+      // my apps 에 추가
+      if (myApp != null) {
+        StaticData.MyApps[packageName] = app;
+      }
+
+      return app.icon;
+    }
 
     return null;
   }
