@@ -5,8 +5,19 @@ class StaticData {
   // ignore: non_constant_identifier_names
   static String get SearchingPackageName => _searchingPackageName;
   // ignore: non_constant_identifier_names
-  static set SearchingPackageName(var packageName) => _searchingPackageName = packageName;
-  
+  static set SearchingPackageName(var packageName) =>
+      _searchingPackageName = packageName;
+
+  // 검색중인지?
+  static bool isSearching() {
+    // 검색중이 아니라면 그냥 리턴
+    if (StaticData.SearchingPackageName == null ||
+        StaticData.SearchingPackageName.isEmpty) {
+      return false;
+    }
+    return true;
+  }
+
   static String _currentIconUrl;
   // ignore: non_constant_identifier_names
   static String get CurrentIconUrl => _currentIconUrl;

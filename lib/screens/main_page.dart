@@ -1,4 +1,4 @@
-import 'package:appbook/screens/application_list_page.dart';
+import 'package:appbook/screens/app_list_page.dart';
 import 'package:appbook/screens/home_page.dart';
 import 'package:flutter/material.dart';
 
