@@ -1,8 +1,5 @@
-import 'package:appbook/screens/all_apps_page.dart';
+import 'package:appbook/screens/application_list_page.dart';
 import 'package:appbook/screens/home_page.dart';
-import 'package:appbook/screens/my_apps_page.dart';
-import 'package:appbook/data/static_data.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatelessWidget {
@@ -30,12 +27,15 @@ class MainPage extends StatelessWidget {
                       ),
                       Tab(text: 'My Apps', icon: Icon(Icons.favorite)),
                       Tab(text: 'All Apps', icon: Icon(Icons.apps))
-                     
                     ],
                   ),
                 ),
                 body: TabBarView(
-                  children: <Widget>[HomePage(), MyAppsPage(), AllAppsPage()],
+                  children: <Widget>[
+                    HomePage(),
+                    ApplicationListPage(true),
+                    ApplicationListPage(false)
+                  ],
                 ))));
   }
 }

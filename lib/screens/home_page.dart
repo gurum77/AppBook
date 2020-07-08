@@ -7,6 +7,9 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
 
+    // home page에 들어오면 키보드를 내려야 함
+    FocusScope.of(context).unfocus();
+
     return Scaffold(
       backgroundColor: Colors.lightBlue,
       body: Column(

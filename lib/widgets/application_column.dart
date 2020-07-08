@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/get_app_detail.dart';
 import 'package:appbook/screens/app_detail_page.dart';
-import 'package:appbook/screens/my_apps_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';

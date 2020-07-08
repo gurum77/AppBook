@@ -1,6 +1,5 @@
 import 'package:appbook/data/join_or_login.dart';
-import 'package:appbook/screens/login.dart';
-import 'package:appbook/screens/main_page_tmp.dart';
+import 'package:appbook/screens/auth_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
