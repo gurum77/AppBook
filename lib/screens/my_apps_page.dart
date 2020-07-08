@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'home_page.dart';
 
 class MyAppsPage extends StatefulWidget {
+  MyAppsPage() {
+  }
   @override
   _MyAppsPageState createState() => _MyAppsPageState();
 }
@@ -70,7 +72,7 @@ class _ListAppsPagesContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: DeviceApps.getInstalledApplications(
-            includeAppIcons: true,
+            includeAppIcons: false,
             includeSystemApps: includeSystemApps,
             onlyAppsWithLaunchIntent: onlyAppsWithLaunchIntent),
         builder: (context, data) {
@@ -78,7 +80,6 @@ class _ListAppsPagesContent extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           } else {
             List<Application> apps = data.data;
-            print(apps);
             return ListView.builder(
                 itemBuilder: (context, position) {
                   Application app = apps[position];
@@ -92,5 +93,4 @@ class _ListAppsPagesContent extends StatelessWidget {
         });
   }
 
-  // application 1개에 대한 column을 만든다.
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/get_app_detail.dart';
 import 'package:appbook/screens/app_detail_page.dart';
@@ -23,7 +25,19 @@ class ApplicationColumn extends StatelessWidget {
                     backgroundImage: MemoryImage(appTmp.icon),
                     backgroundColor: Colors.white,
                   )
-                : null,
+                : FutureBuilder(
+                    future: getApplicationIconInDevice(app.packageName),
+                    builder: (context, snapshot) {
+                      if (snapshot.data == null) {
+                        return CircularProgressIndicator();
+                      } else {
+                        return CircleAvatar(
+                          backgroundImage: MemoryImage(snapshot.data),
+                          backgroundColor: Colors.white,
+                        );
+                      }
+                    },
+                  ),
             // onTap: () => DeviceApps.openApp(app.packageName),
             onTap: () {
               StaticData.CurrentApplication = appTmp;
@@ -41,17 +55,28 @@ class ApplicationColumn extends StatelessWidget {
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text('Version: ${app.versionName}'),
-                      Text(
-                          'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}'),
+                      // Text('Version: ${app.versionName}'),
+                      // Text(
+                      //     'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}'),
                       FutureBuilder(
                         future: getAppCommentCount(app.packageName),
                         builder: (context, snapshot) {
                           if (snapshot.data == null) {
-                            return const Center(
-                                child: CircularProgressIndicator());
+                            return Center(
+                                child: Container(
+                              width: 13,
+                              height: 13,
+                              margin: EdgeInsets.all(0),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            ));
                           } else {
-                            return Text('Comments:${snapshot.data}');
+                            return Text(
+                              'Comments:${snapshot.data}',
+                              style:
+                                  TextStyle(color: Colors.blue, fontSize: 13),
+                            );
                           }
                         },
                       ),
@@ -62,5 +87,14 @@ class ApplicationColumn extends StatelessWidget {
         )
       ],
     );
+  }
+
+  // package에 대한 app icon을 가져옴
+  Future<Uint8List> getApplicationIconInDevice(String packageName) async {
+    Application app = await DeviceApps.getApp(packageName, true);
+
+    if (app is ApplicationWithIcon) return app.icon;
+
+    return null;
   }
 }
