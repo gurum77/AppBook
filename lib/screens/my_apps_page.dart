@@ -1,6 +1,7 @@
 import 'package:appbook/screens/app_detail_page.dart';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/widgets/application_column.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
@@ -81,7 +82,10 @@ class _ListAppsPagesContent extends StatelessWidget {
             return ListView.builder(
                 itemBuilder: (context, position) {
                   Application app = apps[position];
-                  return ApplicationColumn(app: app, context: context);
+                  return ApplicationColumn(
+                    app: app,
+                    context: context,
+                  );
                 },
                 itemCount: apps.length);
           }
@@ -90,4 +94,3 @@ class _ListAppsPagesContent extends StatelessWidget {
 
   // application 1개에 대한 column을 만든다.
 }
-

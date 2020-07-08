@@ -1,38 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:appbook/data/static_data.dart';
 import 'package:appbook/widgets/application_column.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
-import 'app_detail_page.dart';
-import 'package:http/http.dart' as http;
-
 // 모든 앱 보기 페이지
 // ignore: must_be_immutable
 class AllAppsPage extends StatelessWidget {
   var db = Firestore.instance;
-
-  Future<List<Application>> getApplications(
-      CollectionReference collection) async {
-    var qs = await collection.getDocuments();
-
-    var applications = List<Application>();
-
-    for (var doc in qs.documents) {
-      var icon = await _downloadIcon(doc.documentID);
-      Application app = _makeApplicationByDoc(doc, icon);
-      if (app != null) {
-        applications.add(app);
-      }
-    }
-
-    return applications;
+  StorageReference rootRef = FirebaseStorage.instance.ref().getRoot();
+  StorageReference appIconsRef;
+  AllAppsPage() {
+    appIconsRef = rootRef.child('app_icons');
   }
-
   @override
   Widget build(BuildContext context) {
     var collection = db.collection('app_detail');
@@ -59,12 +42,13 @@ class AllAppsPage extends StatelessWidget {
   }
 
   // doc로 application을 만들어서 리턴한다.
-  Application _makeApplicationByDoc(DocumentSnapshot doc, Icon icon) {
+  Application _makeApplicationByDoc(DocumentSnapshot doc, String iconData) {
     String packageName = doc.documentID;
     String appName = doc.data['app_name'];
     String versionName = doc.data['version_name'];
     int installTime = doc.data['install_time'];
     int category = doc.data['category'];
+    String appIcon = doc.data['app_icon'];
     Map<dynamic, dynamic> map = {
       'app_name': appName == null ? 'no name' : appName,
       'apk_file_path': 'apk_file_path',
@@ -78,50 +62,41 @@ class AllAppsPage extends StatelessWidget {
       'category': category == null ? -1 : category,
     };
 
-    if (icon != null) {
-      map['app_icoin'] = icon;
+    if (appIcon != null) {
+      map['app_icon'] = appIcon;
+    } else if (iconData != null) {
+      map['app_icon'] = iconData;
     }
 
     Application app = Application(map);
     return app;
   }
 
-  // package name을 tap했을때..
-  onTapPackageName(DocumentSnapshot doc, BuildContext context) {
-    String packageName = doc.documentID;
-    DeviceApps.isAppInstalled(packageName).then((value) {
-      // 설치되어 있다면...
-      if (value) {
-        DeviceApps.getApp(packageName, true).then((value) {
-          StaticData.CurrentApplication = value;
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AppDetailPage(),
-              ));
-        });
-        // 설치되어 있지 않다면...
-        // db 정보로 application 클래스를 만들어서 상세페이지로 이동
-      } else {
-        // doc로 application을 만든다.
-        StaticData.CurrentApplication = _makeApplicationByDoc(doc);
+  Future<List<Application>> getApplications(
+      CollectionReference collection) async {
+    var qs = await collection.getDocuments();
+    var applications = List<Application>();
 
-        // 상세 페이지로 이동
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AppDetailPage(),
-            ));
+    for (var doc in qs.documents) {
+      var icon = null; //await _downloadIcon(doc.documentID);
+      Application app = _makeApplicationByDoc(doc, icon);
+      if (app != null) {
+        applications.add(app);
       }
-    });
+    }
+
+    return applications;
   }
 
   // icon을 download.
-  Future<Icon> _downloadIcon(String packageName) async {
-    final StorageReference storageReference =
-        FirebaseStorage().ref().child('/app_icons/' + packageName);
-    // final String url = await storageReference.getDownloadURL();
+  Future<String> _downloadIcon(String packageName) async {
+    var iconRef = appIconsRef.child(packageName);
 
-    return null;
+    try {
+      var iconData = await iconRef.getData(1024 * 1024);
+      return base64Encode(iconData);
+    } catch (e) {
+      return null;
+    }
   }
 }
