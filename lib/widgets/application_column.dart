@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/get_app_detail.dart';
 import 'package:appbook/screens/app_detail_page.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:flutter/material.dart';
 
@@ -72,10 +71,21 @@ class ApplicationColumn extends StatelessWidget {
                               ),
                             ));
                           } else {
-                            return Text(
-                              'Comments:${snapshot.data}',
-                              style:
-                                  TextStyle(color: Colors.blue, fontSize: 13),
+                            return Container(
+                              child: Row(
+                                children: <Widget>[
+                                  Icon(Icons.comment, color: Colors.blueGrey, size: 15,),
+                                  Text(
+                                    '${snapshot.data}',
+                                    style:
+                                        TextStyle(color: Colors.blueGrey, fontSize: 13),
+                                  ),
+                                  SizedBox(width: 50,),
+                                  Icon(Icons.arrow_upward, color: Colors.red, size: 15),
+                                  SizedBox(width: 50,),
+                                  Icon(Icons.arrow_downward, color:Colors.blue, size: 15,)
+                                ],
+                              ),
                             );
                           }
                         },
