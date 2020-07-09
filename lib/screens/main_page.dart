@@ -3,7 +3,7 @@ import 'package:appbook/screens/home_page.dart';
 import 'package:flutter/material.dart';
 
 class MainPage extends StatelessWidget {
-  MainPage() {}
+  MainPage();
 
   // This widget is the root of your application.
   @override

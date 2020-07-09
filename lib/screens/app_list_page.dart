@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/get_app_list.dart';
-import 'package:appbook/widgets/application_column.dart';
+import 'package:appbook/widgets/app_column.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -39,11 +39,12 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
               List<Application> apps = snapshot.data;
               if (position < apps.length) {
                 var app = apps[position];
-                return ApplicationColumn(
+                return AppColumn(
                   app: app,
                   context: context,
                 );
-              }
+              } else
+                return null;
             });
           }
         },
@@ -53,17 +54,17 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
 
   // search app bar 위젯
   AppBar buildSearthAppBar() {
-    _searchTextController.text  = StaticData.SearchingPackageName;
+    _searchTextController.text = StaticData.searchingPackageName;
     return AppBar(
       backgroundColor: Colors.blue[100],
       title: TextField(
         onChanged: (text) {
-          StaticData.SearchingPackageName = text;
+          StaticData.searchingPackageName = text;
         },
         onSubmitted: (text) {
           // 찾는다.
           setState(() {
-            StaticData.SearchingPackageName = text;
+            StaticData.searchingPackageName = text;
           });
         },
         autofocus: false,
@@ -75,7 +76,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
             onPressed: () {
               // 찾는다.
               setState(() {
-                StaticData.SearchingPackageName = _searchTextController.text;
+                StaticData.searchingPackageName = _searchTextController.text;
               });
             },
           ),
@@ -84,6 +85,8 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
     );
   }
 
+  //
+  // ignore: unused_element
   Future<String> _downloadIcon(String packageName) async {
     StorageReference rootRef = FirebaseStorage.instance.ref().getRoot();
     StorageReference appIconsRef;

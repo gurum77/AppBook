@@ -6,22 +6,21 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../data/static_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:http/http.dart' as http;
 import 'package:appbook/helpers/get_app_detail.dart';
 
 class AppDetailPage extends StatelessWidget {
-  var db = Firestore.instance;
-  var commentsTextController = TextEditingController();
+  final db = Firestore.instance;
+  final commentsTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    if (StaticData.CurrentApplication == null) {
+    if (StaticData.currentApplication == null) {
       return Scaffold(
         body: Center(
           child: Text('None application'),
         ),
       );
     } else {
-      Application app = StaticData.CurrentApplication;
+      Application app = StaticData.currentApplication;
 
       return Scaffold(
         appBar: AppBar(title: Text('AppBook')),
@@ -34,8 +33,8 @@ class AppDetailPage extends StatelessWidget {
                       backgroundColor: Colors.white,
                       radius: 70,
                     )
-                  : StaticData.CurrentIconUrl != null
-                      ? Image.network(StaticData.CurrentIconUrl)
+                  : StaticData.currentIconUrl != null
+                      ? Image.network(StaticData.currentIconUrl)
                       : Text('No icon'),
               Text(
                 '${app.appName} (${app.packageName})',
@@ -56,7 +55,7 @@ class AppDetailPage extends StatelessWidget {
 
   FutureBuilder<List<String>> buildCommentsList() {
     return FutureBuilder(
-      future: getAppComments(StaticData.CurrentApplication.packageName),
+      future: getAppComments(StaticData.currentApplication.packageName),
       builder: (context, snapShot) {
         if (snapShot == null) {
           return const Center(
@@ -141,7 +140,7 @@ class AppDetailPage extends StatelessWidget {
       data['app_icon'] = base64Encode(app.icon);
     }
 
-    getAppComments(StaticData.CurrentApplication.packageName).then((value) => {
+    getAppComments(StaticData.currentApplication.packageName).then((value) => {
           doc.setData(data),
           value.add(commentsTextController.text),
           doc.updateData({'comments': FieldValue.arrayUnion(value)}),
@@ -150,6 +149,7 @@ class AppDetailPage extends StatelessWidget {
   }
 
   // icon을 upload한다.
+  // ignore: unused_element
   Future<void> _uploadIcon(Application app) async {
     if (app is ApplicationWithIcon) {
       var rootRef = FirebaseStorage.instance.ref().getRoot();

@@ -28,7 +28,7 @@ class Splash extends StatelessWidget {
             return ChangeNotifierProvider<JoinOrLogin>.value(
                 value: JoinOrLogin(), child: AuthPage());
           } else {
-            StaticData.CurrentEmail = snapshot.data.email;
+            StaticData.currentEmail = snapshot.data.email;
             return MainPage();
           }
         });

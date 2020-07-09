@@ -43,9 +43,9 @@ class HomePage extends StatelessWidget {
             // color:Colors.yellow,
             child: Center(
               child: Text(
-                StaticData.CurrentEmail == null
+                StaticData.currentEmail == null
                     ? 'Unknown user'
-                    : StaticData.CurrentEmail,
+                    : StaticData.currentEmail,
                 style: TextStyle(fontSize: 20),
               ),
             ),
