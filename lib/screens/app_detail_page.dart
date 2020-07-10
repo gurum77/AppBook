@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:appbook/widgets/app_simple_info.dart';
+import 'package:appbook/widgets/comment_list_tile.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -24,30 +26,51 @@ class AppDetailPage extends StatelessWidget {
 
       return Scaffold(
         appBar: AppBar(title: Text('AppBook')),
-        body: Center(
-          child: Column(
-            children: <Widget>[
-              app is ApplicationWithIcon
-                  ? CircleAvatar(
-                      backgroundImage: MemoryImage(app.icon),
+        body: Column(
+          children: <Widget>[
+            Material(
+              elevation: 5,
+              child: Container(
+                child: Row(children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CircleAvatar(
+                      backgroundImage: app is ApplicationWithIcon
+                          ? MemoryImage(app.icon)
+                          : AssetImage('assets/login.gif'),
                       backgroundColor: Colors.white,
-                      radius: 70,
-                    )
-                  : StaticData.currentIconUrl != null
-                      ? Image.network(StaticData.currentIconUrl)
-                      : Text('No icon'),
-              Text(
-                '${app.appName} (${app.packageName})',
-                style: TextStyle(fontSize: 19),
+                      radius: 35,
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          '${app.appName}',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '${app.packageName}',
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    width: 60,
+                    child: AppSimpleInfo(
+                      app: app,
+                    ),
+                  ),
+                ]),
               ),
-              Text('Version: ${app.versionName}\n'
-                  'Installed: ${DateTime.fromMillisecondsSinceEpoch(app.installTimeMillis).toString()}\n'),
-              // comments list
-              buildCommentsList(),
-              // comment 입력창
-              buildInputComment(app),
-            ],
-          ),
+            ),
+            // comments list
+            buildCommentsList(),
+            // comment 입력창
+            buildInputComment(app),
+          ],
         ),
       );
     }
@@ -75,16 +98,7 @@ class AppDetailPage extends StatelessWidget {
                 shrinkWrap: true,
                 itemBuilder: (context, position) {
                   var comment = comments[position];
-                  return Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: Text(position.toString()),
-                        onTap: () {},
-                        title: Text(comment),
-                        subtitle: Text('sub'),
-                      ),
-                    ],
-                  );
+                  return CommentListTile(position: position, comment: comment);
                 },
                 itemCount: comments.length,
               ),
@@ -107,6 +121,7 @@ class AppDetailPage extends StatelessWidget {
       controller: commentsTextController,
       decoration: InputDecoration(
         hintText: 'Enter a message',
+        icon: Icon(Icons.comment),
         suffixIcon: FlatButton(
           padding: EdgeInsets.all(5),
           child: Text('등록'),
