@@ -1,6 +1,11 @@
+import 'dart:convert';
 
-import 'package:appbook/helpers/comment_parser.dart';
+import 'package:appbook/data/comment_data.dart';
+import 'package:appbook/data/static_data.dart';
+import 'package:appbook/helpers/db_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CommentListTile extends StatelessWidget {
   CommentListTile({
@@ -11,26 +16,39 @@ class CommentListTile extends StatelessWidget {
 
   final int position;
   final String comment;
-  CommentInfoData commentInfo;
+  CommentData commentData;
 
   @override
   Widget build(BuildContext context) {
-    commentInfo = getCommentInfoFromComment(comment);
+    CommentData commentData;
+    try {
+      var json = jsonDecode(comment);
+      commentData = CommentData.fromJson(json);
+    } catch (e) {
+      commentData = CommentData(comment, 'unknown', 0, 0);
+    }
+
     return ListTile(
       leading: Text((position + 1).toString()),
-      title: Text(comment),
-      subtitle: CommentInfo(commentInfo),
+      title: Text(commentData.content),
+      subtitle: CommentInfo(commentData),
     );
   }
 }
 
 // comment 정보를 표시하는 위젯
-class CommentInfo extends StatelessWidget {
-  const CommentInfo(
-    commentInfo, {
+class CommentInfo extends StatefulWidget {
+  CommentData commentData;
+  CommentInfo(
+    this.commentData, {
     Key key,
   }) : super(key: key);
 
+  @override
+  _CommentInfoState createState() => _CommentInfoState();
+}
+
+class _CommentInfoState extends State<CommentInfo> {
   @override
   Widget build(BuildContext context) {
     double height = 15;
@@ -42,22 +60,83 @@ class CommentInfo extends StatelessWidget {
             size: height,
             color: Colors.red,
           ),
-          onPressed: () {},
+          onPressed: onPressedLike,
         ),
-        Text('0', style: TextStyle(fontSize: height)),
-        SizedBox(
-          width: 20,
-        ),
+        Text(widget.commentData.like.toString(),
+            style: TextStyle(fontSize: height)),
         IconButton(
           icon: Icon(
             Icons.arrow_downward,
             size: height,
             color: Colors.blue,
           ),
-          onPressed: () {},
+          onPressed: onPressedUnlike,
         ),
-        Text('0', style: TextStyle(fontSize: height)),
+        Text(widget.commentData.unlike.toString(),
+            style: TextStyle(fontSize: height)),
+        SizedBox(
+          width: 10,
+        ),
+        Icon(Icons.person),
+        SizedBox(
+          width: 5,
+        ),
+        Expanded(
+            child: Text(
+          widget.commentData.author,
+          softWrap: false,
+        )),
       ],
     );
+  }
+
+  void onPressedLikeOrUnlike(bool isLike) async {
+    bool available = await checkClickAvailable();
+
+    if (available) {
+      if (isLike)
+        widget.commentData.like++;
+      else
+        widget.commentData.unlike++;
+      setState(() {
+        uploadChangedComment(
+            StaticData.currentApplication.packageName, widget.commentData);
+      });
+    }
+  }
+
+  void onPressedUnlike() async => onPressedLikeOrUnlike(false);
+  void onPressedLike() async => onPressedLikeOrUnlike(true);
+
+  Future<bool> isClicked() async {
+    // SharedPreferences.setMockInitialValues({});
+    final ref = await SharedPreferences.getInstance();
+    final isChecked = ref.getBool(widget.commentData.id);
+    if (isChecked == null) return false;
+    return true;
+  }
+
+  Future<void> setClicked() async {
+    final ref = await SharedPreferences.getInstance();
+    ref.setBool(widget.commentData.id, true);
+  }
+
+  // 클릭이 가능한지 체크한다.
+  Future<bool> checkClickAvailable() async {
+    // 이미 눌렀는지 체크
+    bool clicked = await isClicked();
+    if (clicked) {
+      // 이미 눌렀다면 통과
+      showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+                title: Icon(Icons.report_problem),
+                content: Text('한 번만 클릭할 수 있습니다.'),
+              ));
+      return false;
+    } else {
+      setClicked();
+      return true;
+    }
   }
 }
