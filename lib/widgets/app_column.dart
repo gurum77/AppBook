@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 
 import 'app_simple_info.dart';
 
-class AppColumn extends StatelessWidget {
+class AppColumn extends StatefulWidget {
   const AppColumn({Key key, @required this.app, @required this.context})
       : super(key: key);
 
@@ -15,8 +15,13 @@ class AppColumn extends StatelessWidget {
   final BuildContext context;
 
   @override
+  _AppColumnState createState() => _AppColumnState();
+}
+
+class _AppColumnState extends State<AppColumn> {
+  @override
   Widget build(BuildContext context) {
-    Application appTmp = this.app;
+    Application appTmp = this.widget.app;
     return Column(
       children: <Widget>[
         ListTile(
@@ -26,7 +31,7 @@ class AppColumn extends StatelessWidget {
                     backgroundColor: Colors.white,
                   )
                 : FutureBuilder(
-                    future: getApplicationIconInDevice(app.packageName),
+                    future: getApplicationIconInDevice(widget.app.packageName),
                     builder: (context, snapshot) {
                       if (snapshot.data == null) {
                         return CircularProgressIndicator();
@@ -45,20 +50,22 @@ class AppColumn extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => AppDetailPage(),
-                  ));
+                  )).then((value) {
+                setState(() {});
+              });
             },
-            title: app == null
+            title: widget.app == null
                 ? Text('null')
                 // : Text("${app.appName} (${app.packageName})"),
                 : Text(
-                    '${app.appName}',
+                    '${widget.app.appName}',
                     style: TextStyle(fontSize: 20),
                   ),
             trailing: Container(
                 width: 50,
                 height: 20,
                 child: AppSimpleInfo(
-                  app: app,
+                  app: widget.app,
                 ))),
         Divider(
           height: 1.0,
@@ -67,7 +74,6 @@ class AppColumn extends StatelessWidget {
     );
   }
 
-  // package에 대한 app icon을 가져옴
   Future<Uint8List> getApplicationIconInDevice(String packageName) async {
     // myapps에서 미리 찾아 본다.
     Application myApp = StaticData.myApps[packageName];

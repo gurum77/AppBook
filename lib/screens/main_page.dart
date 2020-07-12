@@ -1,6 +1,7 @@
 import 'package:appbook/screens/app_list_page.dart';
 import 'package:appbook/screens/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MainPage extends StatelessWidget {
   MainPage();
