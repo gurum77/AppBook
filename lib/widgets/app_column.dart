@@ -59,7 +59,7 @@ class _AppColumnState extends State<AppColumn> {
                 // : Text("${app.appName} (${app.packageName})"),
                 : Text(
                     '${widget.app.appName}',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(fontSize: 17),
                   ),
             trailing: Container(
                 width: 50,

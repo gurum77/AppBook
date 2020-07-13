@@ -7,6 +7,7 @@ import 'package:appbook/widgets/app_column.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 // 모든 앱 보기 페이지
 // ignore: must_be_immutable
@@ -27,6 +28,66 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildSearthAppBar(),
+      drawer: Drawer(
+        
+        child: ListView(
+          children: <Widget>[
+            ListTile(
+              leading: Icon(Icons.apps),
+              title: Text('All applications'.tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.games),
+              title: Text(ApplicationCategory.game
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.audiotrack),
+              title: Text(ApplicationCategory.audio
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.videocam),
+              title: Text(ApplicationCategory.video
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.image),
+              title: Text(ApplicationCategory.image
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.people),
+              title: Text(ApplicationCategory.social
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.next_week),
+              title: Text(ApplicationCategory.news
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+            ListTile(
+              leading: Icon(Icons.map),
+              title: Text(ApplicationCategory.maps
+                  .toString()
+                  .replaceAll('ApplicationCategory.', '')
+                  .tr()),
+            ),
+          ],
+        ),
+      ),
       body: FutureBuilder(
         future: widget._installedApplications
             ? getInstalledApplications()
@@ -56,6 +117,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
   AppBar buildSearthAppBar() {
     _searchTextController.text = StaticData.searchingPackageName;
     return AppBar(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.blue[100],
       title: TextField(
         onChanged: (text) {
@@ -70,7 +132,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
         autofocus: false,
         controller: _searchTextController,
         decoration: InputDecoration(
-          hintText: 'Search applications',
+          hintText: 'Search applications'.tr(),
           suffixIcon: FlatButton(
             child: Icon(Icons.search),
             onPressed: () {

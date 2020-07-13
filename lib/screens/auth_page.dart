@@ -4,6 +4,7 @@ import 'package:appbook/screens/forget_pw.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AuthPage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -44,8 +45,8 @@ class AuthPage extends StatelessWidget {
                     },
                     child: Text(
                       joinOrLogin.isJoin
-                          ? "Already Have an Account? Sign in"
-                          : "Don't Have an Account? Create One",
+                          ? "Already Have an Account? Sign in".tr()
+                          : "Don't Have an Account? Create One".tr(),
                       style: TextStyle(
                           color: joinOrLogin.isJoin ? Colors.red : Colors.blue),
                     )),
@@ -80,11 +81,11 @@ class AuthPage extends StatelessWidget {
                   controller: _emailController,
                   decoration: InputDecoration(
                     icon: Icon(Icons.account_circle),
-                    labelText: 'Email',
+                    labelText: 'Email'.tr(),
                   ),
                   validator: (String value) {
                     if (value.isEmpty) {
-                      return 'Please input correct Email.';
+                      return 'Please input correct Email.'.tr();
                     }
                     return null;
                   },
@@ -94,11 +95,11 @@ class AuthPage extends StatelessWidget {
                   controller: _passwordController,
                   decoration: InputDecoration(
                     icon: Icon(Icons.vpn_key),
-                    labelText: 'Password',
+                    labelText: 'Password'.tr(),
                   ),
                   validator: (String value) {
                     if (value.isEmpty) {
-                      return 'Please input correct Password.';
+                      return 'Please input correct Password.'.tr();
                     }
                     return null;
                   },
@@ -110,8 +111,12 @@ class AuthPage extends StatelessWidget {
                   builder: (context, value, child) => Opacity(
                     opacity: value.isJoin ? 0 : 1,
                     child: GestureDetector(
-                        onTap: value.isJoin ? null : (){goToForgetPw(context);},
-                        child: Text("Forgot Password")),
+                        onTap: value.isJoin
+                            ? null
+                            : () {
+                                goToForgetPw(context);
+                              },
+                        child: Text("Forgot Password".tr())),
                   ),
                 )
               ],
@@ -136,7 +141,7 @@ class AuthPage extends StatelessWidget {
           child: Consumer<JoinOrLogin>(
             builder: (context, joinOrLogin, child) => RaisedButton(
               child: Text(
-                joinOrLogin.isJoin ? 'Join' : 'Login',
+                joinOrLogin.isJoin ? 'Join'.tr() : 'Login'.tr(),
                 style: TextStyle(fontSize: 20, color: Colors.white),
               ),
               color: joinOrLogin.isJoin ? Colors.red : Colors.blue,
@@ -161,7 +166,7 @@ class AuthPage extends StatelessWidget {
 
     if (user == null) {
       final snackBar = SnackBar(
-        content: Text('Please try again later.'),
+        content: Text('Please try again later.'.tr()),
       );
 
       Scaffold.of(context).showSnackBar(snackBar);
@@ -177,7 +182,7 @@ class AuthPage extends StatelessWidget {
 
     if (user == null) {
       final snackBar = SnackBar(
-        content: Text('Please try again later.'),
+        content: Text('Please try again later.'.tr()),
       );
 
       Scaffold.of(context).showSnackBar(snackBar);

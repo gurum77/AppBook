@@ -10,6 +10,9 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        localizationsDelegates: context.localizationDelegates,
+        supportedLocales: context.supportedLocales,
+        locale: context.locale,
         title: 'AppBook',
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -19,15 +22,16 @@ class MainPage extends StatelessWidget {
             length: 3,
             child: Scaffold(
                 appBar: AppBar(
-                  title: Text('AppBook'),
+                  automaticallyImplyLeading: true,
+                  title: Text('AppBook').tr(),
                   bottom: TabBar(
                     tabs: <Widget>[
                       Tab(
-                        text: 'Home',
+                        text: 'Home'.tr(),
                         icon: Icon(Icons.home),
                       ),
-                      Tab(text: 'My Apps', icon: Icon(Icons.favorite)),
-                      Tab(text: 'All Apps', icon: Icon(Icons.apps))
+                      Tab(text: 'My Apps'.tr(), icon: Icon(Icons.favorite)),
+                      Tab(text: 'All Apps'.tr(), icon: Icon(Icons.apps))
                     ],
                   ),
                 ),

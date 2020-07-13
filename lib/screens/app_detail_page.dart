@@ -1,16 +1,12 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:appbook/data/comment_data.dart';
 import 'package:appbook/helpers/db_helper.dart';
 import 'package:appbook/widgets/app_simple_info.dart';
 import 'package:appbook/widgets/comment_list_tile.dart';
 import 'package:device_apps/device_apps.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../data/static_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:appbook/helpers/get_app_detail.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AppDetailPage extends StatefulWidget {
   @override
@@ -34,7 +30,7 @@ class _AppDetailPageState extends State<AppDetailPage> {
       Application app = StaticData.currentApplication;
 
       return Scaffold(
-        appBar: AppBar(title: Text('AppBook')),
+        appBar: AppBar(title: Text('AppBook'.tr())),
         body: Column(
           children: <Widget>[
             Material(
@@ -113,10 +109,8 @@ class _AppDetailPageState extends State<AppDetailPage> {
               ),
             );
           } else {
-            return Text(
-              'no data',
-              style: TextStyle(color: Colors.yellow, fontSize: 30),
-            );
+            return Container(
+                width: 20, height: 20, child: CircularProgressIndicator());
           }
         }
       },
@@ -129,11 +123,11 @@ class _AppDetailPageState extends State<AppDetailPage> {
       autofocus: false,
       controller: commentsTextController,
       decoration: InputDecoration(
-        hintText: 'Enter a message',
+        hintText: 'Enter a message'.tr(),
         icon: Icon(Icons.comment),
         suffixIcon: FlatButton(
           padding: EdgeInsets.all(5),
-          child: Text('등록'),
+          child: Text('Add'.tr()),
           color: Colors.blueAccent,
           onPressed: () async {
             // 유효성 검사

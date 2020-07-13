@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:appbook/data/comment_data.dart';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/db_helper.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -131,7 +130,7 @@ class _CommentInfoState extends State<CommentInfo> {
           context: context,
           builder: (_) => AlertDialog(
                 title: Icon(Icons.report_problem),
-                content: Text('한 번만 클릭할 수 있습니다.'),
+                content: Text('Click once'),
               ));
       return false;
     } else {

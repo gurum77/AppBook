@@ -18,7 +18,6 @@ class HomePage extends StatelessWidget {
             height: 50,
           ),
           Container(
-            // color: Colors.red,
             height: 100,
             child: Text(
               'Lv. 100',
