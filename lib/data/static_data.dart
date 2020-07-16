@@ -32,4 +32,14 @@ class StaticData {
   // 설치되어 있는 앱들
   static Map<String, Application> _myApps = Map<String, Application>();
   static Map<String, Application> get myApps => _myApps;
+
+  // 카테고리
+  static bool _allCategory;
+  static bool get allCategory => _allCategory;
+  static set allCategory(var all) => _allCategory = all;
+
+  static ApplicationCategory _currentCategory;
+  static ApplicationCategory get currentCategory => _currentCategory;
+  static set currentCategory(var category) => _currentCategory = category;
+
 }

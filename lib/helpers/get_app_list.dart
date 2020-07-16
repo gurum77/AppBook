@@ -33,8 +33,15 @@ Application _makeApplicationByDoc(DocumentSnapshot doc, String iconData) {
   return app;
 }
 
-// 찾고 있는 앱만 리턴
+// 검색중인 앱만 리턴
+// 해당 카테고리 중에서 선택..
 List<Application> getSearchingApplicationsOnly(List<Application> apps) {
+  // 지정된 카테고리만 남김
+  if (!StaticData.allCategory) {
+    apps.removeWhere(
+        (element) => element.category != StaticData.currentCategory);
+  }
+
   // 검색중이 아니라면 그냥 리턴
   if (StaticData.searchingPackageName == null ||
       StaticData.searchingPackageName.isEmpty) {
@@ -43,6 +50,7 @@ List<Application> getSearchingApplicationsOnly(List<Application> apps) {
 
   var reg = RegExp(StaticData.searchingPackageName, caseSensitive: false);
   apps.removeWhere((element) => reg.firstMatch(element.appName) == null);
+
   return apps;
 }
 
@@ -62,6 +70,12 @@ Future<List<Application>> getApplicationsOnServer() async {
 
   for (var doc in qs.documents) {
     // 서버에서 가져올때는 무조건 검색 결과만 가져온다
+    // 카테고리 일치하는지 체크
+    if (!StaticData.allCategory) {
+      int category = doc.data['category'];
+      if (category != StaticData.currentCategory.index) continue;
+    }
+
     if (reg != null) {
       if (reg.firstMatch(doc.data['app_name']) == null) continue;
     }

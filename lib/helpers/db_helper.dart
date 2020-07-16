@@ -75,6 +75,9 @@ Future<void> uploadNewComment(Application app, String newComment) async {
 // package의 comment를 모두 가져온다.
 Future<List<String>> getAppComments(String packageName) {
   var doc = _getDocumentCollection(packageName);
+  if(doc == null)
+  return null;
+  
   return doc.get().then((DocumentSnapshot ds) {
     var comments = List<String>();
     if (ds.data != null && ds.data['comments'] != null) {

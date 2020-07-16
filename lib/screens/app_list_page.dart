@@ -23,71 +23,15 @@ class ApplicationListPage extends StatefulWidget {
 
 class _ApplicationListPageState extends State<ApplicationListPage> {
   var _searchTextController = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: buildSearthAppBar(),
-      drawer: Drawer(
-        
-        child: ListView(
-          children: <Widget>[
-            ListTile(
-              leading: Icon(Icons.apps),
-              title: Text('All applications'.tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.games),
-              title: Text(ApplicationCategory.game
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.audiotrack),
-              title: Text(ApplicationCategory.audio
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.videocam),
-              title: Text(ApplicationCategory.video
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.image),
-              title: Text(ApplicationCategory.image
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.people),
-              title: Text(ApplicationCategory.social
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.next_week),
-              title: Text(ApplicationCategory.news
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-            ListTile(
-              leading: Icon(Icons.map),
-              title: Text(ApplicationCategory.maps
-                  .toString()
-                  .replaceAll('ApplicationCategory.', '')
-                  .tr()),
-            ),
-          ],
-        ),
-      ),
+      drawer: buildCategoryDrawer(context),
       body: FutureBuilder(
         future: widget._installedApplications
             ? getInstalledApplications()
@@ -113,10 +57,105 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
     );
   }
 
+  // category 를 지정하는 drawer를 생성
+  Drawer buildCategoryDrawer(BuildContext context) {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          ListTile(
+            leading: Icon(Icons.apps),
+            title: Text('All applications'.tr()),
+            onTap: () =>
+                changeCurrentCategory(context, ApplicationCategory.game, true),
+          ),
+          ListTile(
+            leading: Icon(Icons.games),
+            title: Text(ApplicationCategory.game
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () =>
+                changeCurrentCategory(context, ApplicationCategory.game, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.audiotrack),
+            title: Text(ApplicationCategory.audio
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () => changeCurrentCategory(
+                context, ApplicationCategory.audio, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.videocam),
+            title: Text(ApplicationCategory.video
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () => changeCurrentCategory(
+                context, ApplicationCategory.video, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.image),
+            title: Text(ApplicationCategory.image
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () => changeCurrentCategory(
+                context, ApplicationCategory.image, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.people),
+            title: Text(ApplicationCategory.social
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () => changeCurrentCategory(
+                context, ApplicationCategory.social, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.next_week),
+            title: Text(ApplicationCategory.news
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () =>
+                changeCurrentCategory(context, ApplicationCategory.news, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.map),
+            title: Text(ApplicationCategory.maps
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () =>
+                changeCurrentCategory(context, ApplicationCategory.maps, false),
+          ),
+          ListTile(
+            leading: Icon(Icons.error),
+            title: Text(ApplicationCategory.undefined
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () => changeCurrentCategory(
+                context, ApplicationCategory.undefined, false),
+          ),
+        ],
+      ),
+    );
+  }
+
   // search app bar 위젯
   AppBar buildSearthAppBar() {
     _searchTextController.text = StaticData.searchingPackageName;
     return AppBar(
+      // drawer icon을 변경하기 위해서는 appbar의 leading을 설정한다.
+      leading: IconButton(
+        icon: Icon(Icons.access_alarm),
+        onPressed: () {
+          _scaffoldKey.currentState.openDrawer();
+        },
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       backgroundColor: Colors.blue[100],
       title: TextField(
@@ -162,5 +201,22 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
     } catch (e) {
       return null;
     }
+  }
+
+  // 카테고리를 변경하고, 앱 리스트를 갱신한다.
+  void changeCurrentCategory(
+      BuildContext context, ApplicationCategory category, bool allCategory) {
+    // drawer를 닫는다.
+    Navigator.pop(context);
+
+    // page를 갱신한다
+    setState(() {
+      if (allCategory)
+        StaticData.allCategory = allCategory;
+      else {
+        StaticData.allCategory = false;
+        StaticData.currentCategory = category;
+      }
+    });
   }
 }
