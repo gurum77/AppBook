@@ -7,19 +7,35 @@ import 'package:appbook/data/static_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
 
-CollectionReference _getAppDetailCollection() {
-  return Firestore.instance.collection('app_detail');
-}
+import "db_core_helper.dart";
+import 'db_get_helper.dart';
 
-DocumentReference _getDocumentCollection(String packageName) {
-  return _getAppDetailCollection().document(packageName);
+// 변경되는 만큼의 like 또는 unlike를 upload한다.
+void uploadLikeOrUnlikeAdded(String email, bool like) {
+  var doc = getUserDetailDocumentByEmail(email);
+
+  String fieldName = like ? 'like' : 'unlike';
+
+  doc.get().then((value) async {
+    // 아직 없으면 하나 만든다.
+    if (value.data == null) {
+      Map<String, dynamic> data = {
+        'like': 0,
+        'unlike': 0,
+      };
+
+      await doc.setData(data);
+    }
+
+    int current = value.data[fieldName];
+    doc.updateData({fieldName: current + 1});
+  });
 }
 
 // 변경된 comment data를 upload한다.
 void uploadChangedComment(String packageName, CommentData commentData) {
-  var doc = _getDocumentCollection(packageName);
+  var doc = getAppDetailDocumentByPackageName(packageName);
   doc.get().then((value) {
     List<dynamic> comments = value.data['comments'];
     for (int i = 0; i < comments.length; ++i) {
@@ -48,8 +64,7 @@ void uploadChangedComment(String packageName, CommentData commentData) {
 
 // 새로운 comment를 upload 한다.
 Future<void> uploadNewComment(Application app, String newComment) async {
- 
-  var doc = _getDocumentCollection(app.packageName);
+  var doc = getAppDetailDocumentByPackageName(app.packageName);
 
   Map<String, dynamic> data = {
     'app_name': app.appName,
@@ -70,24 +85,6 @@ Future<void> uploadNewComment(Application app, String newComment) async {
 
   doc.setData(data);
   await doc.updateData({'comments': FieldValue.arrayUnion(value)});
-}
-
-// package의 comment를 모두 가져온다.
-Future<List<String>> getAppComments(String packageName) {
-  var doc = _getDocumentCollection(packageName);
-  if(doc == null)
-  return null;
-  
-  return doc.get().then((DocumentSnapshot ds) {
-    var comments = List<String>();
-    if (ds.data != null && ds.data['comments'] != null) {
-      for (var comment in ds.data['comments']) {
-        comments.add(comment.toString());
-      }
-    }
-
-    return comments;
-  });
 }
 
 // icon을 upload한다.

@@ -1,8 +1,8 @@
 import 'package:device_apps/device_apps.dart';
-import 'package:flutter/material.dart';
 
 class StaticData {
-  static String _searchingPackageName;
+
+  static String _searchingPackageName = '';
   static String get searchingPackageName => _searchingPackageName;
   static set searchingPackageName(var packageName) =>
       _searchingPackageName = packageName;
@@ -17,7 +17,7 @@ class StaticData {
     return true;
   }
 
-  static String _currentIconUrl;
+  static String _currentIconUrl = '';
   static String get currentIconUrl => _currentIconUrl;
   static set currentIconUrl(var pn) => _currentIconUrl = pn;
 
@@ -26,7 +26,7 @@ class StaticData {
   static Application get currentApplication => _currentApplication;
   static set currentApplication(var ca) => _currentApplication = ca;
 
-  static String _currentEmail;
+  static String _currentEmail = '';
   static String get currentEmail => _currentEmail;
   static set currentEmail(var email) => _currentEmail = email;
 
@@ -35,11 +35,11 @@ class StaticData {
   static Map<String, Application> get myApps => _myApps;
 
   // 카테고리
-  static bool _allCategory;
+  static bool _allCategory = true;
   static bool get allCategory => _allCategory;
   static set allCategory(var all) => _allCategory = all;
 
-  static ApplicationCategory _currentCategory;
+  static ApplicationCategory _currentCategory = ApplicationCategory.audio;
   static ApplicationCategory get currentCategory => _currentCategory;
   static set currentCategory(var category) => _currentCategory = category;
 

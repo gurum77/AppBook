@@ -1,4 +1,6 @@
 import 'package:appbook/data/static_data.dart';
+import 'package:appbook/data/user_data.dart';
+import 'package:appbook/helpers/db_get_helper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -19,10 +21,21 @@ class HomePage extends StatelessWidget {
           ),
           Container(
             height: 100,
-            child: Text(
-              'Lv. 100',
-              style: TextStyle(color: Colors.red, fontSize: 30),
-              textAlign: TextAlign.center,
+            child: FutureBuilder(
+              future: getUserData(StaticData.currentEmail),
+              builder: (context, snapshot) {
+                if (snapshot.data == null) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  UserData userData = snapshot.data;
+                  return Column(
+                    children: <Widget>[
+                      Text('Like : ${userData.like}  Unlike : ${userData.unlike}'),
+                      
+                    ],
+                  );
+                }
+              },
             ),
           ),
           Container(
