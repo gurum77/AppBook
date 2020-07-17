@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appbook/data/static_data.dart';
+import 'package:appbook/helpers/category_icons.dart';
 import 'package:appbook/helpers/get_app_list.dart';
 import 'package:appbook/widgets/app_column.dart';
 import 'package:device_apps/device_apps.dart';
@@ -63,13 +64,13 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
       child: ListView(
         children: <Widget>[
           ListTile(
-            leading: Icon(Icons.apps),
+            leading: CategoryIcons.getIcon(ApplicationCategory.audio, true),
             title: Text('All applications'.tr()),
             onTap: () =>
                 changeCurrentCategory(context, ApplicationCategory.game, true),
           ),
           ListTile(
-            leading: Icon(Icons.games),
+            leading: CategoryIcons.getIcon(ApplicationCategory.game, false),
             title: Text(ApplicationCategory.game
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
@@ -78,7 +79,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
                 changeCurrentCategory(context, ApplicationCategory.game, false),
           ),
           ListTile(
-            leading: Icon(Icons.audiotrack),
+            leading: CategoryIcons.getIcon(ApplicationCategory.audio, false),
             title: Text(ApplicationCategory.audio
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
@@ -87,7 +88,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
                 context, ApplicationCategory.audio, false),
           ),
           ListTile(
-            leading: Icon(Icons.videocam),
+            leading: CategoryIcons.getIcon(ApplicationCategory.video, false),
             title: Text(ApplicationCategory.video
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
@@ -96,7 +97,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
                 context, ApplicationCategory.video, false),
           ),
           ListTile(
-            leading: Icon(Icons.image),
+            leading: CategoryIcons.getIcon(ApplicationCategory.image, false),
             title: Text(ApplicationCategory.image
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
@@ -105,7 +106,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
                 context, ApplicationCategory.image, false),
           ),
           ListTile(
-            leading: Icon(Icons.people),
+            leading: CategoryIcons.getIcon(ApplicationCategory.social, false),
             title: Text(ApplicationCategory.social
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
@@ -114,7 +115,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
                 context, ApplicationCategory.social, false),
           ),
           ListTile(
-            leading: Icon(Icons.next_week),
+            leading: CategoryIcons.getIcon(ApplicationCategory.news, false),
             title: Text(ApplicationCategory.news
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
@@ -123,13 +124,22 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
                 changeCurrentCategory(context, ApplicationCategory.news, false),
           ),
           ListTile(
-            leading: Icon(Icons.map),
+            leading: CategoryIcons.getIcon(ApplicationCategory.maps, false),
             title: Text(ApplicationCategory.maps
                 .toString()
                 .replaceAll('ApplicationCategory.', '')
                 .tr()),
             onTap: () =>
                 changeCurrentCategory(context, ApplicationCategory.maps, false),
+          ),
+           ListTile(
+            leading: CategoryIcons.getIcon(ApplicationCategory.productivity, false),
+            title: Text(ApplicationCategory.productivity
+                .toString()
+                .replaceAll('ApplicationCategory.', '')
+                .tr()),
+            onTap: () =>
+                changeCurrentCategory(context, ApplicationCategory.productivity, false),
           ),
           ListTile(
             leading: Icon(Icons.error),
@@ -151,7 +161,7 @@ class _ApplicationListPageState extends State<ApplicationListPage> {
     return AppBar(
       // drawer icon을 변경하기 위해서는 appbar의 leading을 설정한다.
       leading: IconButton(
-        icon: Icon(Icons.access_alarm),
+        icon: CategoryIcons.getIcon(StaticData.currentCategory, StaticData.allCategory),
         onPressed: () {
           _scaffoldKey.currentState.openDrawer();
         },
