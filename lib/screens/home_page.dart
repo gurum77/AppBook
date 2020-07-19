@@ -1,8 +1,12 @@
+import 'package:appbook/custom_paint.dart/home_page_background.dart';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/data/user_data.dart';
 import 'package:appbook/helpers/db_get_helper.dart';
+import 'package:appbook/widgets/user_detail_info.dart';
+import 'package:appbook/widgets/user_simple_info.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 class HomePage extends StatelessWidget {
   @override
@@ -13,57 +17,59 @@ class HomePage extends StatelessWidget {
     FocusScope.of(context).unfocus();
 
     return Scaffold(
-      backgroundColor: Colors.lightBlue,
-      body: Column(
+      body: Stack(
+        alignment: Alignment.center,
         children: <Widget>[
-          SizedBox(
-            height: 50,
+          CustomPaint(
+            size: size,
+            painter: HomePageBackground(),
           ),
-          Container(
-            height: 100,
-            child: FutureBuilder(
-              future: getUserData(StaticData.currentEmail),
-              builder: (context, snapshot) {
-                if (snapshot.data == null) {
-                  return const Center(child: CircularProgressIndicator());
-                } else {
-                  UserData userData = snapshot.data;
-                  return Column(
-                    children: <Widget>[
-                      Text('Like : ${userData.like}  Unlike : ${userData.unlike}'),
-                      
-                    ],
-                  );
-                }
-              },
-            ),
-          ),
-          Container(
-            child: FittedBox(
-              child: CircleAvatar(
-                // backgroundImage: NetworkImage('https://picsum.photos/200'),
-                backgroundImage: AssetImage('assets/login.gif'),
+          Column(
+            children: <Widget>[
+              SizedBox(
+                height: 30,
               ),
-            ),
-            width: size.width,
-            height: 290,
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          Expanded(
-            // color:Colors.yellow,
-            child: Center(
-              child: Text(
-                StaticData.currentEmail == null
-                    ? 'Unknown user'
-                    : StaticData.currentEmail,
-                style: TextStyle(fontSize: 20),
+              Container(
+                margin: EdgeInsets.all(20),
+                alignment: Alignment.centerLeft,
+                width: size.width,
+                child: UserSimpleInfoRow(
+                  size: size,
+                ),
               ),
-            ),
+              UserDetailInfoRow(),
+              Container(
+                width: size.width * 0.70,
+                child: Divider(
+                  thickness: 3,
+                  color: Colors.purple,
+                ),
+              ),
+              Container(height:20),
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  children: List.generate(30, (index) {
+                    return Card(
+                      elevation: 10,
+                      color: Colors.green,
+                      shadowColor: Colors.black,
+                      margin: EdgeInsets.all(15),
+                      shape: CircleBorder(),
+                      child: Align(
+                        child: Text('$index', style: TextStyle(fontSize: 25)),
+                        alignment: Alignment.center,
+                      ),
+                    );
+                  }),
+                ),
+              )
+            ],
           ),
         ],
       ),
     );
   }
+
+  getBadge() {}
 }

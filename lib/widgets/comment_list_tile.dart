@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:appbook/data/comment_data.dart';
+import 'package:appbook/data/define.dart';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/db_upload_helper.dart';
 import 'package:flutter/material.dart';
@@ -99,8 +100,8 @@ class _CommentInfoState extends State<CommentInfo> {
         widget.commentData.unlike++;
 
       // 작성자의 like또는 unlike를 갱신
-      uploadLikeOrUnlikeAdded(
-          widget.commentData.author, isLike);
+      uploadUserDataChanged(
+          widget.commentData.author, isLike ? userdata_type.like : userdata_type.unlike);
 
       setState(() {
         uploadChangedComment(

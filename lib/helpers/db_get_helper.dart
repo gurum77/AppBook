@@ -28,7 +28,12 @@ Future<UserData> getUserData(String email) async {
 
   return doc.get().then((value) {
     if (value.data != null) {
-      var userData = UserData(email, value.data['like'], value.data['unlike']);
+      var userData = UserData(
+          email: email,
+          like: value.data['like'],
+          unlike: value.data['unlike'],
+          reply: value.data['reply']);
+
       return userData;
     }
   });

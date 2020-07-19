@@ -3,6 +3,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:appbook/data/comment_data.dart';
+import 'package:appbook/data/define.dart';
 import 'package:appbook/data/static_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_apps/device_apps.dart';
@@ -11,24 +12,42 @@ import 'package:firebase_storage/firebase_storage.dart';
 import "db_core_helper.dart";
 import 'db_get_helper.dart';
 
-// 변경되는 만큼의 like 또는 unlike를 upload한다.
-void uploadLikeOrUnlikeAdded(String email, bool like) {
+// 변경되는 사용자 데이타를 upload 한다.
+void uploadUserDataChanged(String email, userdata_type type) {
   var doc = getUserDetailDocumentByEmail(email);
 
-  String fieldName = like ? 'like' : 'unlike';
+  String fieldName;
+  switch (type) {
+    case userdata_type.like:
+      fieldName = 'like';
+      break;
+    case userdata_type.unlike:
+      fieldName = 'unlike';
+      break;
+    case userdata_type.reply:
+      fieldName = 'reply';
+      break;
+    default:
+  }
 
   doc.get().then((value) async {
     // 아직 없으면 하나 만든다.
     if (value.data == null) {
-      Map<String, dynamic> data = {
-        'like': 0,
-        'unlike': 0,
-      };
+      Map<String, dynamic> data = {fieldName: 0};
 
       await doc.setData(data);
+      return;
     }
 
+  // 해당 필드만 없으면 필드만 추가해서 갱신
     int current = value.data[fieldName];
+    if (current == null) {
+      Map<String, dynamic> data = value.data;
+      data[fieldName] = 1;
+      await doc.setData(data);
+      return;
+    }
+
     doc.updateData({fieldName: current + 1});
   });
 }
@@ -85,6 +104,9 @@ Future<void> uploadNewComment(Application app, String newComment) async {
 
   doc.setData(data);
   await doc.updateData({'comments': FieldValue.arrayUnion(value)});
+
+  // 새 comment를 등록하면 reply 개수도 증가시킨다.
+  uploadUserDataChanged(StaticData.currentEmail, userdata_type.reply);
 }
 
 // icon을 upload한다.
