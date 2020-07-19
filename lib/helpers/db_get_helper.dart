@@ -1,3 +1,5 @@
+import 'package:appbook/data/env.dart';
+import 'package:appbook/data/env_exp.dart';
 import 'package:appbook/data/static_data.dart';
 import 'package:appbook/data/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -28,13 +30,26 @@ Future<UserData> getUserData(String email) async {
 
   return doc.get().then((value) {
     if (value.data != null) {
-      var userData = UserData(
+      StaticData.userData = UserData(
           email: email,
           like: value.data['like'],
           unlike: value.data['unlike'],
           reply: value.data['reply']);
 
-      return userData;
+      return StaticData.userData;
     }
   });
+}
+
+// 환경변수값을 db에서 가져온다.
+Future<Env> getEnv() async {
+  
+  var doc = getExpDocumentInConfig();
+  var snapshot = await doc.get();
+  StaticData.env.envExp  = EnvExp(
+      like: snapshot.data['like'],
+      unlike: snapshot.data['unlike'],
+      reply: snapshot.data['reply']);
+
+  return StaticData.env;
 }

@@ -1,10 +1,17 @@
+import 'package:appbook/data/static_data.dart';
+import 'package:appbook/helpers/db_get_helper.dart';
 import 'package:appbook/screens/app_list_page.dart';
 import 'package:appbook/screens/home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:easy_localization/easy_localization.dart';
 
 class MainPage extends StatelessWidget {
-  MainPage();
+  MainPage() {
+
+    // 환경변수값을 db에서 가져온다.
+    getEnv();
+    
+  }
 
   // This widget is the root of your application.
   @override

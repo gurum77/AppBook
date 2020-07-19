@@ -7,8 +7,8 @@ class HomePageBackground extends CustomPainter {
     canvas.drawCircle(
         Offset(0, 0), size.height / 3, Paint()..color = Colors.red[50]);
     // 오른쪽의 큰 원
-    canvas.drawCircle(Offset(size.width / 1.2, -size.height / 4),
-        size.height / 1.5, Paint()..color = Colors.red[100]);
+    canvas.drawCircle(Offset(size.width * 1.1 , -size.height / 4),
+        size.height / 1.2, Paint()..color = Colors.red[100]);
         
   }
 

@@ -1,4 +1,5 @@
 import 'package:appbook/data/static_data.dart';
+import 'package:appbook/helpers/level_manager.dart';
 import 'package:flutter/material.dart';
 
 class UserSimpleInfoRow extends StatelessWidget {
@@ -24,7 +25,7 @@ class UserSimpleInfoRow extends StatelessWidget {
             width: size.width - (size.width * 0.15 * 2) - 40,
             height: size.width * 0.15 / 2,
             child: Text(
-              'LV. 100',
+              'LV. ${LevelManager.getLevel()}',
               style: TextStyle(fontSize: 20),
               textAlign: TextAlign.end,
             ),
@@ -36,7 +37,7 @@ class UserSimpleInfoRow extends StatelessWidget {
               height: size.width * 0.15 / 2,
               child: LinearProgressIndicator(
                 backgroundColor: Colors.black,
-                value: 0.6,
+                value: LevelManager.calcRemainExpRateForNextLevel(),
               )),
           Container(
             // color:Colors.blue,

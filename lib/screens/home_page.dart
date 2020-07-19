@@ -26,9 +26,6 @@ class HomePage extends StatelessWidget {
           ),
           Column(
             children: <Widget>[
-              SizedBox(
-                height: 30,
-              ),
               Container(
                 margin: EdgeInsets.all(20),
                 alignment: Alignment.centerLeft,
@@ -45,19 +42,20 @@ class HomePage extends StatelessWidget {
                   color: Colors.purple,
                 ),
               ),
-              Container(height:20),
+              Container(height: 20),
               Expanded(
                 child: GridView.count(
-                  crossAxisCount: 3,
+                  crossAxisCount: 4,
                   children: List.generate(30, (index) {
                     return Card(
                       elevation: 10,
-                      color: Colors.green,
+                      color: Colors.green[100],
                       shadowColor: Colors.black,
                       margin: EdgeInsets.all(15),
                       shape: CircleBorder(),
                       child: Align(
-                        child: Text('$index', style: TextStyle(fontSize: 25)),
+                        child:
+                            Text('${index+1}', style: TextStyle(fontSize: 25)),
                         alignment: Alignment.center,
                       ),
                     );

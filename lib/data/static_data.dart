@@ -1,7 +1,9 @@
 import 'package:device_apps/device_apps.dart';
 
-class StaticData {
+import 'env.dart';
+import 'user_data.dart';
 
+class StaticData {
   static String _searchingPackageName = '';
   static String get searchingPackageName => _searchingPackageName;
   static set searchingPackageName(var packageName) =>
@@ -43,4 +45,14 @@ class StaticData {
   static ApplicationCategory get currentCategory => _currentCategory;
   static set currentCategory(var category) => _currentCategory = category;
 
+  // 환경설정 변수
+  static Env _env = Env();
+  static Env get env => _env;
+  static set env(var env) => _env = env;
+
+  // user data
+  static UserData _userData =
+      UserData(email: 'unknown', like: 0, unlike: 0, reply: 0);
+  static UserData get userData => _userData;
+  static set userData(var ud) => _userData = ud;
 }
