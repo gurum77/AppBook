@@ -52,7 +52,7 @@ class StaticData {
 
   // user data
   static UserData _userData =
-      UserData(email: 'unknown', like: 0, unlike: 0, reply: 0);
+      UserData(like: 0, unlike: 0, reply: 0, newLike: 0, newUnlike: 0);
   static UserData get userData => _userData;
   static set userData(var ud) => _userData = ud;
 }

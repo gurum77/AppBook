@@ -12,23 +12,19 @@ import 'package:firebase_storage/firebase_storage.dart';
 import "db_core_helper.dart";
 import 'db_get_helper.dart';
 
+// user data를 upload한다.
+Future<void> uploadUserData() async {
+  var doc = getUserDetailDocumentByEmail(StaticData.currentEmail);
+  Map<String, dynamic> data = StaticData.userData.toJson();
+  await doc.setData(data);
+}
+
 // 변경되는 사용자 데이타를 upload 한다.
+// 1개를 증가시킨다.
 void uploadUserDataChanged(String email, userdata_type type) {
   var doc = getUserDetailDocumentByEmail(email);
 
-  String fieldName;
-  switch (type) {
-    case userdata_type.like:
-      fieldName = 'like';
-      break;
-    case userdata_type.unlike:
-      fieldName = 'unlike';
-      break;
-    case userdata_type.reply:
-      fieldName = 'reply';
-      break;
-    default:
-  }
+  String fieldName = type.toString().replaceFirst('userdata_type.', '');
 
   doc.get().then((value) async {
     // 아직 없으면 하나 만든다.
@@ -39,7 +35,7 @@ void uploadUserDataChanged(String email, userdata_type type) {
       return;
     }
 
-  // 해당 필드만 없으면 필드만 추가해서 갱신
+    // 해당 필드만 없으면 필드만 추가해서 갱신
     int current = value.data[fieldName];
     if (current == null) {
       Map<String, dynamic> data = value.data;

@@ -30,23 +30,20 @@ Future<UserData> getUserData(String email) async {
 
   return doc.get().then((value) {
     if (value.data != null) {
-      StaticData.userData = UserData(
-          email: email,
-          like: value.data['like'],
-          unlike: value.data['unlike'],
-          reply: value.data['reply']);
+      StaticData.userData = UserData.fromJson(value.data);
 
       return StaticData.userData;
+    } else {
+      return null;
     }
   });
 }
 
 // 환경변수값을 db에서 가져온다.
 Future<Env> getEnv() async {
-  
   var doc = getExpDocumentInConfig();
   var snapshot = await doc.get();
-  StaticData.env.envExp  = EnvExp(
+  StaticData.env.envExp = EnvExp(
       like: snapshot.data['like'],
       unlike: snapshot.data['unlike'],
       reply: snapshot.data['reply']);

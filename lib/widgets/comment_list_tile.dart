@@ -99,9 +99,9 @@ class _CommentInfoState extends State<CommentInfo> {
       else
         widget.commentData.unlike++;
 
-      // 작성자의 like또는 unlike를 갱신
+      // 작성자의 new_like또는 new_unlike를 갱신
       uploadUserDataChanged(
-          widget.commentData.author, isLike ? userdata_type.like : userdata_type.unlike);
+          widget.commentData.author, isLike ? userdata_type.new_like : userdata_type.new_unlike);
 
       setState(() {
         uploadChangedComment(

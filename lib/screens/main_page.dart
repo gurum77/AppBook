@@ -1,4 +1,3 @@
-import 'package:appbook/data/static_data.dart';
 import 'package:appbook/helpers/db_get_helper.dart';
 import 'package:appbook/screens/app_list_page.dart';
 import 'package:appbook/screens/home_page.dart';

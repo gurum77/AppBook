@@ -1,27 +1,35 @@
 import 'dart:convert';
 
 class UserData {
-  const UserData({this.email, this.like, this.unlike, this.reply});
+  const UserData(
+      {this.like, this.unlike, this.reply, this.newLike, this.newUnlike});
 
   static UserData fromString(String str) {
     try {
       var json = jsonDecode(str);
       return UserData.fromJson(json);
     } catch (e) {
-      return UserData(email: "unknown", like: 0, unlike: 0, reply: 0);
+      return UserData(like: 0, unlike: 0, reply: 0, newLike: 0, newUnlike: 0);
     }
   }
 
   UserData.fromJson(Map<String, dynamic> json)
-      : email = json['email'],
-        like = json['like'],
+      : like = json['like'],
         unlike = json['unlike'],
-        reply = json['reply'];
+        reply = json['reply'],
+        newLike = json['new_like'],
+        newUnlike = json['new_unlike'];
 
-  Map<String, dynamic> toJson() =>
-      {'id': email, 'like': like, 'unlike': unlike, 'reply': reply};
-  final String email;
+  Map<String, dynamic> toJson() => {
+        'like': like,
+        'unlike': unlike,
+        'reply': reply,
+        'new_like': newLike,
+        'new_unlike': newUnlike
+      };
   final int like;
   final int unlike;
   final int reply;
+  final int newLike;
+  final int newUnlike;
 }
